@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from googleapiclient import discovery
 from httplib2 import Http
 from oauth2client import file, client, tools
@@ -12,6 +10,11 @@ if not creds or creds.invalid:
     creds = tools.run_flow(flow, store)
 DRIVE = discovery.build('drive', 'v3', http=creds.authorize(Http()))
 
+# print(DRIVE)
 files = DRIVE.files().list().execute().get('files', [])
+
+
+
 for f in files:
-    print(f['name'], f['mimeType'])
+    # print(f['name'], f['mimeType'])
+    print(f)
