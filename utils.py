@@ -36,7 +36,7 @@ def get_numeric_files(files):
 
     return numeric_files
 
-def proof_of_work(previous_hash, difficulty=4):
+def proof_of_work(previous_hash, difficulty=5):
     nonce = random.uniform(1, 100)
     prefix = '0' * difficulty  # Exemplo: '0000' para dificuldade 4
 

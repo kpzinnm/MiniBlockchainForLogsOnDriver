@@ -48,7 +48,7 @@ def create_and_upload_new_file(drive, max_file):
     file_stream = io.BytesIO()
     downloader = MediaIoBaseDownload(file_stream, request)
 
-    done = False
+    done = False    
     while not done:
         _, done = downloader.next_chunk()
 
@@ -58,7 +58,7 @@ def create_and_upload_new_file(drive, max_file):
     ## Converter arquivo txt para dicionario
     contentDict = json.loads(content)
     
-    hash = consensus_with_sleep_time(content)   
+    hash = proof_of_work(content)   
     timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     print("Midia:")
