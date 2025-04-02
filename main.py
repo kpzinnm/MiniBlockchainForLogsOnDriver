@@ -6,7 +6,7 @@ def process_drive_upload():
     """Função executada por cada thread para processar arquivos no Drive."""
     print("Thread Criada!")
     cont = 0
-    while cont != 5:
+    while cont != 1:
         drive = get_drive_service()
         max_file = get_largest_numbered_file(drive)
         
@@ -16,7 +16,7 @@ def process_drive_upload():
 
 # Criando múltiplas threads para execução simultânea
 threads = []
-num_threads = 30  # Número de threads para rodar em paralelo
+num_threads = 10  # Número de threads para rodar em paralelo
 
 for _ in range(num_threads):
     thread = threading.Thread(target=process_drive_upload)
