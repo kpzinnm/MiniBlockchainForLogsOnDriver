@@ -1,7 +1,7 @@
 import threading
 from drive_service import get_drive_service
 from file_processor import get_largest_numbered_file, create_and_upload_new_file
-from channels import get_files
+from channels import Channels
 
 def process_drive_upload():
     """Função executada por cada thread para processar arquivos no Drive."""
@@ -15,6 +15,7 @@ def process_drive_upload():
             create_and_upload_new_file(drive, max_file)
         cont += 1
 
+## Roda a block chain
 def run_blockchain():
     
     # Criando múltiplas threads para execução simultânea
@@ -34,8 +35,12 @@ def run_blockchain():
 
     print("Precisamos encontrar a maior cadeia!!!!")
 
+## Roda o algoritmo de identificação da chan principal
 def search_channels():
     drive = get_drive_service()
-    get_files(drive)
+    ch = Channels(drive)
+    ## Use para gerar o arquivo de texto chan01, que é o arquivo que contem a chan principal
+    ch.make()
     
 search_channels()
+#run_blockchain()

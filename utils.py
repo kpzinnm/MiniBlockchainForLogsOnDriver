@@ -16,12 +16,13 @@ def get_numeric_files(files):
     pattern = re.compile(r"^(\d+)\..+$")  # Captura apenas arquivos no formato número.extensão
 
     for f in files:
-        print("travei aquii!!")
-        print(f)
+        #print("travei aquii!!")
+        #print(f)
         match = pattern.match(f['name'])
         if match:
             numeric_files.append({'file': f, 'number': int(match.group(1))})
 
+    #print(numeric_files)
     if numeric_files:
         max_number = max(numeric_files, key=lambda x: x['number'])['number']
 
@@ -30,8 +31,7 @@ def get_numeric_files(files):
 
         # Passo 4: Filtrar o arquivo com o menor timestamp
         min_timestamp_file = min(max_number_files, key=lambda x: x['file']['createdTime'])
-        print("MIN TIMESTAMP FILE:")
-        print(min_timestamp_file)
+
         return min_timestamp_file
 
     return numeric_files
@@ -76,3 +76,14 @@ def consensus_with_sleep_time(previous_hash):
 
     print(f"PoS resolvido! Nó selecionado: {previous_hash}, Hash: {new_hash}")
     return new_hash
+
+def get_numeric_files_level(files, level):
+    out = []
+
+    name = str(level)+".txt"
+
+    for file in files:
+        if (file['name'] == name):
+            out.append(file)
+    
+    return out
