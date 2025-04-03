@@ -11,23 +11,19 @@ class Channels():
 
     def make(self):
         head = True
-        #head_block = get_numeric_files()
 
         branches = []
 
         while (True):
             if (head):
-                #files = self.drive.files().list().execute().get('files', [])
                 head_block = self.get_head()
                 count = 0
                 position_in_chain = 0
-                #print(head_block)
                 level = head_block['number']
                 self.favorite_files(head_block['file']['id'])
                 blockDic = self.download_block(head_block['file']['id'])
                 blockDic['id'] = head_block['file']['id']
                 branches.append(blockDic)
-                #print(branches)
                 while (level >= 0):
                     level -= 1
                     blocks_level = self.get_files_level(level)
@@ -65,7 +61,6 @@ class Channels():
     def save_chan_one(self, chan):
         with open("chan01.txt", "w") as file:
             json.dump(chan, file, indent=4)
-            #file.writelines(chan)
 
 
     def download_block(self, id):
@@ -77,19 +72,17 @@ class Channels():
         while not done:
             _, done = downloader.next_chunk()
 
-        file_stream.seek(0)  # Volta para o início do arquivo
-        content = file_stream.read().decode("utf-8")  # Decodifica para string
+        file_stream.seek(0)
+        content = file_stream.read().decode("utf-8")  
 
-        ## Converter arquivo txt para dicionario
         contentDict = json.loads(content)
-        # self.favorite_files(contentDict)
         return contentDict
 
     def favorite_files(self, file_id):
         print(f"Favoritando arquivo: {file_id}")
 
         try:
-            self.drive.files().update(  # Usando 'self.drive_service'
+            self.drive.files().update(  
                 fileId=file_id,
                 body={"starred": True}
             ).execute()
@@ -111,7 +104,5 @@ class Channels():
         ).execute().get('files', [])
 
         head_block = get_numeric_files(head)
-
-        #head_number = (max(head, key=lambda x: x['name'])['name']).split('.')[0]
 
         return head_block
