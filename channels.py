@@ -2,6 +2,7 @@ from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 from utils import get_numeric_files_level, get_numeric_files
 import io
 import json
+from googleapiclient.errors import HttpError
 
 class Channels():
 
@@ -22,6 +23,7 @@ class Channels():
                 position_in_chain = 0
                 #print(head_block)
                 level = head_block['number']
+                self.favorite_files(head_block['file']['id'])
                 blockDic = self.download_block(head_block['file']['id'])
                 blockDic['id'] = head_block['file']['id']
                 branches.append(blockDic)
@@ -45,6 +47,9 @@ class Channels():
                         print("VERIFICAÇÃO DE HASH: ")
                         print(i)
                         if (i['hash'] == hash_goal):
+                            print("Adicionei:")
+                            print(i)
+                            self.favorite_files(i['id'])
                             branches.append(i)
                             position_in_chain += 1
                             break
@@ -77,9 +82,20 @@ class Channels():
 
         ## Converter arquivo txt para dicionario
         contentDict = json.loads(content)
-
+        # self.favorite_files(contentDict)
         return contentDict
 
+    def favorite_files(self, file_id):
+        print(f"Favoritando arquivo: {file_id}")
+
+        try:
+            self.drive.files().update(  # Usando 'self.drive_service'
+                fileId=file_id,
+                body={"starred": True}
+            ).execute()
+            print(f"Arquivo {file_id} favoritado com sucesso!")
+        except HttpError as error:
+            print(f"Erro ao favoritar arquivo {file_id}: {error}")
 
     def get_files_level(self, level):
         

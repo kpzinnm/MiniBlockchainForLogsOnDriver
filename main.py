@@ -41,6 +41,6 @@ def search_channels():
     ch = Channels(drive)
     ## Use para gerar o arquivo de texto chan01, que é o arquivo que contem a chan principal
     ch.make()
-    
+
+run_blockchain()
 search_channels()
-#run_blockchain()
