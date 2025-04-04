@@ -40,4 +40,4 @@ def search_channels():
 
 run_blockchain()
 search_channels()
-# run_benchmark()
+

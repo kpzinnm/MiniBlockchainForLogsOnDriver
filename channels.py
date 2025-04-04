@@ -17,7 +17,6 @@ class Channels():
         while (True):
             if (head):
                 head_block = self.get_head()
-                count = 0
                 position_in_chain = 0
                 level = head_block['number']
                 self.favorite_files(head_block['file']['id'])
@@ -49,11 +48,6 @@ class Channels():
                             branches.append(i)
                             position_in_chain += 1
                             break
-                '''for i in head_block:
-                    print(i)
-                    branches.insert(count, self.download_block(i['id']))
-                    count+=1
-                print(branches)'''
                 print(branches)
                 self.save_chan_one(branches)
                 break
