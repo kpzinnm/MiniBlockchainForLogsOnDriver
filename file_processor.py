@@ -17,11 +17,11 @@ def get_largest_numbered_file(drive):
     print(f"Thread {threading.current_thread().name} acordou e está processando...")
 
 
-    # files = drive.files().list().execute().get('files', [])
+    
     files = drive.files().list(
-        pageSize=10,  # Definindo que queremos os 10 arquivos mais recentes
+        pageSize=10,
         fields="files(id, name, createdTime)",
-        orderBy="createdTime desc"  # Ordena pela data de criação de forma decrescente (mais recente primeiro)
+        orderBy="createdTime desc"
     ).execute().get('files', [])
     print("FIels: ")
     print(files)
@@ -30,13 +30,11 @@ def get_largest_numbered_file(drive):
     if not numeric_files:
         print("Nenhum arquivo encontrado.")
         return 0
-    
-    # Encontra o arquivo com o maior número
-    # max_file_data = max(numeric_files, key=lambda f: f['number'])
+      
     most_recent_file =  numeric_files
     print("Most recent file:")
     print(most_recent_file)
-    return most_recent_file  # Retorna o arquivo original
+    return most_recent_file  
 
 def create_and_upload_new_file(drive, max_file):
     """Cria um novo arquivo com um número maior e faz upload para o Google Drive."""
@@ -52,10 +50,9 @@ def create_and_upload_new_file(drive, max_file):
     while not done:
         _, done = downloader.next_chunk()
 
-    file_stream.seek(0)  # Volta para o início do arquivo
-    content = file_stream.read().decode("utf-8")  # Decodifica para string
+    file_stream.seek(0) 
+    content = file_stream.read().decode("utf-8")  
 
-    ## Converter arquivo txt para dicionario
     contentDict = json.loads(content)
     
     
@@ -77,10 +74,6 @@ def create_and_upload_new_file(drive, max_file):
             'timestamp': timestamp_str
     }
     with open(temp_file_path, "w") as f:
-        # f.write(f"HASH: \n")
-        # f.write(hash + "\n")
-        # f.write("TIMESTAMP: \n")
-        # f.write(timestamp_str)
         f.write(json.dumps(dict))
 
     media = MediaFileUpload(temp_file_path, mimetype='text/plain')
@@ -91,4 +84,4 @@ def create_and_upload_new_file(drive, max_file):
     print(f"Novo arquivo enviado: {new_file_name} (ID: {uploaded_file['id']})")
     
     if open(temp_file_path, "w"):
-        os.remove(temp_file_path) #Condição de corrida, so a primeira thread deveria excluir o arquivo
+        os.remove(temp_file_path)
