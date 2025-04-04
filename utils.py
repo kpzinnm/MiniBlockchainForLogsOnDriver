@@ -36,13 +36,34 @@ def get_numeric_files(files):
 
     return numeric_files
 
-def proof_of_work(previous_hash, difficulty=5):
+def proof_of_work(previous_hash, name, drive, difficulty=1):
     nonce = random.uniform(1, 100)
     prefix = '0' * difficulty  # Exemplo: '0000' para dificuldade 4
+    request = 10
 
     while True:
         data = f"{previous_hash}{nonce}".encode()  # Concatena o hash anterior e o nonce
         new_hash = hashlib.sha256(data).hexdigest()  # Gera o hash
+        
+
+        if (request == 0):
+                files = drive.files().list(
+                    pageSize=1,  # Definindo que queremos os 10 arquivos mais recentes
+                    fields="files(id, name, createdTime)",
+                    orderBy="createdTime desc"  # Ordena pela data de criação de forma decrescente (mais recente primeiro)
+                ).execute().get('files', [])
+                
+                print(files)
+                name_goal = files[0]['name'].split('.')[0]
+                print("TESTANDO EXPRESSAO")
+                print(name_goal)
+                print("NAME GOAL: "+name_goal)
+                if (name_goal == name):
+                    return ("NONE")
+                
+                request = 10
+        
+        request -= 1
 
         if new_hash.startswith(prefix):
             print(f"PoW resolvido! Nonce: {nonce}, Hash: {new_hash}")

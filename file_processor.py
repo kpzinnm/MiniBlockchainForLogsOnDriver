@@ -58,7 +58,11 @@ def create_and_upload_new_file(drive, max_file):
     ## Converter arquivo txt para dicionario
     contentDict = json.loads(content)
     
-    hash = proof_of_work(content)   
+    
+    hash = proof_of_work(content, new_file_name, drive)  
+    if (hash == "NONE"):
+        return 0
+     
     timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     print("Midia:")
