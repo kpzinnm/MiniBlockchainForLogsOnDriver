@@ -56,7 +56,7 @@ def create_and_upload_new_file(drive, max_file):
     contentDict = json.loads(content)
     
     
-    hash = proof_of_work(content, new_file_name, drive)  
+    hash, nonce = proof_of_work(content, new_file_name, drive)  
     if (hash == "NONE"):
         return 0
      
@@ -71,7 +71,8 @@ def create_and_upload_new_file(drive, max_file):
     dict = {
             'hash': hash,
             'previous_hash': contentDict['hash'],
-            'timestamp': timestamp_str
+            'timestamp': timestamp_str,
+            'nonce' : nonce
     }
     with open(temp_file_path, "w") as f:
         f.write(json.dumps(dict))

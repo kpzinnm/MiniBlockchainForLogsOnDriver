@@ -102,7 +102,8 @@ class Channels():
             fields="files(id, name, createdTime)",
             orderBy="createdTime desc"  
         ).execute().get('files', [])
-
+        print("TODOS OS ARQUIVOS HEADD!!!!!!!!!!!!!!!!")
+        print(head)
         head_block = get_numeric_files(head)
 
         return head_block

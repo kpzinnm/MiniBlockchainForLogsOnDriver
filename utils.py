@@ -16,13 +16,10 @@ def get_numeric_files(files):
     pattern = re.compile(r"^(\d+)\..+$")  # Captura apenas arquivos no formato número.extensão
 
     for f in files:
-        #print("travei aquii!!")
-        #print(f)
         match = pattern.match(f['name'])
         if match:
             numeric_files.append({'file': f, 'number': int(match.group(1))})
 
-    #print(numeric_files)
     if numeric_files:
         max_number = max(numeric_files, key=lambda x: x['number'])['number']
 
@@ -36,10 +33,10 @@ def get_numeric_files(files):
 
     return numeric_files
 
-def proof_of_work(previous_hash, name, drive, difficulty=1):
+def proof_of_work(previous_hash, name, drive, difficulty=4):
     nonce = random.uniform(1, 100)
     prefix = '0' * difficulty  # Exemplo: '0000' para dificuldade 4
-    request = 10
+    request = 50000
 
     while True:
         data = f"{previous_hash}{nonce}".encode()  # Concatena o hash anterior e o nonce
@@ -48,26 +45,24 @@ def proof_of_work(previous_hash, name, drive, difficulty=1):
 
         if (request == 0):
                 files = drive.files().list(
-                    pageSize=1,  # Definindo que queremos os 10 arquivos mais recentes
+                    pageSize=1,
                     fields="files(id, name, createdTime)",
-                    orderBy="createdTime desc"  # Ordena pela data de criação de forma decrescente (mais recente primeiro)
+                    orderBy="createdTime desc"
                 ).execute().get('files', [])
                 
                 print(files)
                 name_goal = files[0]['name'].split('.')[0]
-                print("TESTANDO EXPRESSAO")
-                print(name_goal)
-                print("NAME GOAL: "+name_goal)
                 if (name_goal == name):
-                    return ("NONE")
+                    print("-------------_________________________!!!!!!!!!!!!!!!!!!PAREI DE BUSCAR -------------_________________________!!!!!!!!!!!!!!!!!!")
+                    return ("NONE", "NONE")
                 
-                request = 10
+                request = 50000
         
         request -= 1
 
         if new_hash.startswith(prefix):
             print(f"PoW resolvido! Nonce: {nonce}, Hash: {new_hash}")
-            return new_hash
+            return new_hash, nonce
 
         nonce += 1  # Incrementa o nonce para tentar outro valor
 
