@@ -1,6 +1,6 @@
 import os
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
-from utils import get_numeric_files, proof_of_work, consensus_with_sleep_time
+from utils import get_numeric_files, proof_of_work
 import random
 import time
 import threading
