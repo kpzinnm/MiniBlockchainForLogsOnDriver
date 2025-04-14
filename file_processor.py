@@ -67,7 +67,8 @@ def create_and_upload_new_file(drive, max_file):
     print("Hash")
     print(hash)
 
-    temp_file_path = f"{new_file_name}.txt"
+    thread_id = threading.current_thread().ident
+    temp_file_path = f"{new_file_name}-{thread_id}.txt"
     dict = {
             'hash': hash,
             'previous_hash': contentDict['hash'],
@@ -77,9 +78,11 @@ def create_and_upload_new_file(drive, max_file):
     with open(temp_file_path, "w") as f:
         f.write(json.dumps(dict))
 
+    new_name = f"{new_file_name}.txt"
+
     media = MediaFileUpload(temp_file_path, mimetype='text/plain')
-    
-    new_metadata = {'name': temp_file_path, 'mimeType': 'text/plain'}
+
+    new_metadata = {'name': new_name, 'mimeType': 'text/plain'}
     uploaded_file = drive.files().create(body=new_metadata, media_body=media, fields='id').execute()
     
     print(f"Novo arquivo enviado: {new_file_name} (ID: {uploaded_file['id']})")
