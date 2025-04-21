@@ -1,6 +1,6 @@
 import os
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
-from utils import get_numeric_files, proof_of_work, consensus_with_sleep_time
+from utils import get_numeric_files, proof_of_work
 import random
 import time
 import threading
@@ -17,11 +17,11 @@ def get_largest_numbered_file(drive):
     print(f"Thread {threading.current_thread().name} acordou e está processando...")
 
 
-    # files = drive.files().list().execute().get('files', [])
+    
     files = drive.files().list(
-        pageSize=10,  # Definindo que queremos os 10 arquivos mais recentes
+        pageSize=10,
         fields="files(id, name, createdTime)",
-        orderBy="createdTime desc"  # Ordena pela data de criação de forma decrescente (mais recente primeiro)
+        orderBy="createdTime desc"
     ).execute().get('files', [])
     print("FIels: ")
     print(files)
@@ -30,13 +30,11 @@ def get_largest_numbered_file(drive):
     if not numeric_files:
         print("Nenhum arquivo encontrado.")
         return 0
-    
-    # Encontra o arquivo com o maior número
-    # max_file_data = max(numeric_files, key=lambda f: f['number'])
+      
     most_recent_file =  numeric_files
     print("Most recent file:")
     print(most_recent_file)
-    return most_recent_file  # Retorna o arquivo original
+    return most_recent_file  
 
 def create_and_upload_new_file(drive, max_file):
     """Cria um novo arquivo com um número maior e faz upload para o Google Drive."""
@@ -52,13 +50,16 @@ def create_and_upload_new_file(drive, max_file):
     while not done:
         _, done = downloader.next_chunk()
 
-    file_stream.seek(0)  # Volta para o início do arquivo
-    content = file_stream.read().decode("utf-8")  # Decodifica para string
+    file_stream.seek(0) 
+    content = file_stream.read().decode("utf-8")  
 
-    ## Converter arquivo txt para dicionario
     contentDict = json.loads(content)
     
-    hash = proof_of_work(content)   
+    
+    hash, nonce = proof_of_work(content, new_file_name, drive)  
+    if (hash == "NONE"):
+        return 0
+     
     timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     print("Midia:")
@@ -66,25 +67,25 @@ def create_and_upload_new_file(drive, max_file):
     print("Hash")
     print(hash)
 
-    temp_file_path = f"{new_file_name}.txt"
+    thread_id = threading.current_thread().ident
+    temp_file_path = f"{new_file_name}-{thread_id}.txt"
     dict = {
             'hash': hash,
             'previous_hash': contentDict['hash'],
-            'timestamp': timestamp_str
+            'timestamp': timestamp_str,
+            'nonce' : nonce
     }
     with open(temp_file_path, "w") as f:
-        # f.write(f"HASH: \n")
-        # f.write(hash + "\n")
-        # f.write("TIMESTAMP: \n")
-        # f.write(timestamp_str)
         f.write(json.dumps(dict))
 
+    new_name = f"{new_file_name}.txt"
+
     media = MediaFileUpload(temp_file_path, mimetype='text/plain')
-    
-    new_metadata = {'name': temp_file_path, 'mimeType': 'text/plain'}
+
+    new_metadata = {'name': new_name, 'mimeType': 'text/plain'}
     uploaded_file = drive.files().create(body=new_metadata, media_body=media, fields='id').execute()
     
     print(f"Novo arquivo enviado: {new_file_name} (ID: {uploaded_file['id']})")
     
     if open(temp_file_path, "w"):
-        os.remove(temp_file_path) #Condição de corrida, so a primeira thread deveria excluir o arquivo
+        os.remove(temp_file_path)
